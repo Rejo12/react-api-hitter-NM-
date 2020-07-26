@@ -1,6 +1,12 @@
 {
   "name": "react-api-hitter",
-  "version": "0.1.0",
+  "version": "0.1.4",
+  "author": "Rejo Mathew",
+  "license": "MIT",
+  "keywords": [
+    "react-api-hitter",
+    "api-hitter"
+  ],
   "peerDependencies": {
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
