@@ -265,7 +265,8 @@ var ApiHitter = /*#__PURE__*/function (_React$Component) {
     _defineProperty(_assertThisInitialized(_this), "state", {
       urlToSearch: '',
       responseData: [],
-      viewMode: ''
+      viewMode: '',
+      requestType: 'get'
     });
 
     return _this;
@@ -280,14 +281,34 @@ var ApiHitter = /*#__PURE__*/function (_React$Component) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                console.log(this.state.urlToSearch);
-                _context.prev = 1;
+                _context.prev = 0;
+
+                if (!(this.state.requestType === 'get')) {
+                  _context.next = 7;
+                  break;
+                }
+
                 _context.next = 4;
                 return _axios.default.get(this.state.urlToSearch);
 
               case 4:
                 response = _context.sent;
+                _context.next = 11;
+                break;
 
+              case 7:
+                if (!(this.state.requestType === 'delete')) {
+                  _context.next = 11;
+                  break;
+                }
+
+                _context.next = 10;
+                return _axios.default.delete(this.state.urlToSearch);
+
+              case 10:
+                response = _context.sent;
+
+              case 11:
                 if (response.data != undefined) {
                   if (response.data.length > 0 && response.data.data == undefined) {
                     this.setState({
@@ -300,28 +321,28 @@ var ApiHitter = /*#__PURE__*/function (_React$Component) {
                   }
                 }
 
-                _context.next = 12;
+                _context.next = 18;
                 break;
 
-              case 8:
-                _context.prev = 8;
-                _context.t0 = _context["catch"](1);
+              case 14:
+                _context.prev = 14;
+                _context.t0 = _context["catch"](0);
                 console.log(_context.t0);
                 this.setState({
                   responseData: _context.t0
                 });
 
-              case 12:
+              case 18:
                 this.setState({
                   viewMode: 'string'
                 });
 
-              case 13:
+              case 19:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[1, 8]]);
+        }, _callee, this, [[0, 14]]);
       }));
 
       function handleClick() {
@@ -335,13 +356,39 @@ var ApiHitter = /*#__PURE__*/function (_React$Component) {
     value: function render() {
       var _this2 = this;
 
+      var buttonDisable = true;
+
+      if (this.state.urlToSearch != "") {
+        buttonDisable = false;
+      } // console.log(this.state.requestType);
       // console.log(this.state.urlToSearch);
+
+
       return /*#__PURE__*/_react.default.createElement("div", {
         className: "container"
       }, /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("div", {
         className: "row"
       }, /*#__PURE__*/_react.default.createElement("div", {
-        className: "col-lg-8 col-md-8 col-sm-8"
+        style: {
+          'maxWidth': 'max-content !important'
+        }
+      }, "Request Type:"), /*#__PURE__*/_react.default.createElement("div", {
+        className: "col-lg-1 col-md-1 col-sm-1"
+      }, /*#__PURE__*/_react.default.createElement("select", {
+        name: "requestType",
+        id: "requestType",
+        onChange: function onChange(event) {
+          _this2.setState({
+            requestType: event.target.value
+          });
+        },
+        value: this.state.requestType
+      }, /*#__PURE__*/_react.default.createElement("option", {
+        value: "get"
+      }, "GET"), /*#__PURE__*/_react.default.createElement("option", {
+        value: "delete"
+      }, "DELETE"))), "\xA0\xA0\xA0\xA0\xA0", /*#__PURE__*/_react.default.createElement("div", {
+        className: "col-lg-5 col-md-5 col-sm-5"
       }, /*#__PURE__*/_react.default.createElement("input", {
         type: "text",
         placeholder: "enter the api url",
@@ -356,14 +403,15 @@ var ApiHitter = /*#__PURE__*/function (_React$Component) {
           'width': '80%'
         }
       })), /*#__PURE__*/_react.default.createElement("div", {
-        className: "col-lg-4 col-md-4 col-sm-4"
+        className: "col-lg-2 col-md-2 col-sm-2"
       }, /*#__PURE__*/_react.default.createElement("button", {
         type: "primary",
         className: "btn-primary",
         style: {
-          'width': '25%',
+          'width': '50%',
           'cursor': 'pointer'
         },
+        disabled: buttonDisable,
         onClick: function onClick() {
           return _this2.handleClick();
         }

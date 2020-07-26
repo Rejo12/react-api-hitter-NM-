@@ -3,12 +3,17 @@ import axios from 'axios';
 
 class ApiHitter extends React.Component{
 
-  state={urlToSearch:'',responseData:[],viewMode:''}
+  state={urlToSearch:'',responseData:[],viewMode:'',requestType:'get'}
 
   async handleClick(){
-    console.log(this.state.urlToSearch);
+    // console.log(this.state.urlToSearch);
     try{
-      var response = await axios.get(this.state.urlToSearch);
+      if(this.state.requestType === 'get'){
+        var response = await axios.get(this.state.urlToSearch);
+      }
+      else if(this.state.requestType === 'delete'){
+        var response = await axios.delete(this.state.urlToSearch);
+      }
       if(response.data != undefined){
         if(response.data.length > 0 && response.data.data == undefined){
           this.setState({responseData:response.data})
@@ -26,18 +31,33 @@ class ApiHitter extends React.Component{
   }
 
   render(){
+    var buttonDisable=true;
+    if(this.state.urlToSearch != ""){
+      buttonDisable=false;
+    }
+    // console.log(this.state.requestType);
     // console.log(this.state.urlToSearch);
     return(
       <div className="container">
       <br/>
       <br/>
       <div className="row">
-        <div className="col-lg-8 col-md-8 col-sm-8">
+      <div  style={{'maxWidth':'max-content !important'}}>
+      Request Type:
+      </div>
+        <div className="col-lg-1 col-md-1 col-sm-1">
+      <select name="requestType" id="requestType" onChange={(event)=>{this.setState({requestType:event.target.value})}} value={this.state.requestType}>
+        <option value="get" >GET</option>
+        <option value="delete" >DELETE</option>
+      </select>
+      </div>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div className="col-lg-5 col-md-5 col-sm-5">
         <input type="text" placeholder="enter the api url" id="apiUrl" onChange={(event)=>this.setState({urlToSearch:event.target.value})}
         value={this.state.urlToSearch} style={{'width':'80%'}}/>
         </div>
-        <div className="col-lg-4 col-md-4 col-sm-4">
-          <button type="primary" className="btn-primary" style={{'width':'25%','cursor':'pointer'}} onClick={()=>this.handleClick()}>Search</button>
+        <div className="col-lg-2 col-md-2 col-sm-2">
+          <button type="primary" className="btn-primary" style={{'width':'50%','cursor':'pointer'}} disabled={buttonDisable}onClick={()=>this.handleClick()}>Search</button>
         </div>
       </div>
       <br/>
