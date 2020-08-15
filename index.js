@@ -266,13 +266,25 @@ var ApiHitter = /*#__PURE__*/function (_React$Component) {
       urlToSearch: '',
       responseData: [],
       viewMode: '',
-      requestType: 'get'
+      requestType: 'get',
+      requestBody: '',
+      shouldRender: ''
     });
 
     return _this;
   }
 
   _createClass(ApiHitter, [{
+    key: "shouldComponentUpdate",
+    value: function shouldComponentUpdate(nextProps, nextState) {
+      // console.log(nextState.shouldRender);
+      if (nextState.shouldRender == false) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+  }, {
     key: "handleClick",
     value: function () {
       var _handleClick = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
@@ -281,68 +293,106 @@ var ApiHitter = /*#__PURE__*/function (_React$Component) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.prev = 0;
+                this.setState({
+                  shouldRender: true
+                });
+                _context.prev = 1;
 
                 if (!(this.state.requestType === 'get')) {
-                  _context.next = 7;
+                  _context.next = 8;
                   break;
                 }
 
-                _context.next = 4;
+                _context.next = 5;
                 return _axios.default.get(this.state.urlToSearch);
 
-              case 4:
+              case 5:
                 response = _context.sent;
-                _context.next = 11;
+                _context.next = 24;
                 break;
 
-              case 7:
+              case 8:
                 if (!(this.state.requestType === 'delete')) {
-                  _context.next = 11;
+                  _context.next = 14;
                   break;
                 }
 
-                _context.next = 10;
+                _context.next = 11;
                 return _axios.default.delete(this.state.urlToSearch);
 
-              case 10:
-                response = _context.sent;
-
               case 11:
-                if (response.data != undefined) {
-                  if (response.data.length > 0 && response.data.data == undefined) {
-                    this.setState({
-                      responseData: response.data
-                    });
-                  } else if (response.data.data.length > 0) {
-                    this.setState({
-                      responseData: response.data.data
-                    });
-                  }
-                }
-
-                _context.next = 18;
+                response = _context.sent;
+                _context.next = 24;
                 break;
 
               case 14:
-                _context.prev = 14;
-                _context.t0 = _context["catch"](0);
-                console.log(_context.t0);
+                if (!(this.state.requestType === 'post')) {
+                  _context.next = 20;
+                  break;
+                }
+
+                _context.next = 17;
+                return _axios.default.post(this.state.urlToSearch, JSON.parse(this.state.requestBody));
+
+              case 17:
+                response = _context.sent;
+                _context.next = 24;
+                break;
+
+              case 20:
+                if (!(this.state.requestType === 'put')) {
+                  _context.next = 24;
+                  break;
+                }
+
+                _context.next = 23;
+                return _axios.default.put(this.state.urlToSearch, JSON.parse(this.state.requestBody));
+
+              case 23:
+                response = _context.sent;
+
+              case 24:
+                if (response != undefined) {
+                  // console.log(response);
+                  this.setState({
+                    responseData: response.data,
+                    shouldRender: true
+                  });
+                }
+                /*if(response.data != undefined){
+                  if(response.data.length > 0 && response.data.data == undefined){
+                    this.setState({responseData:response.data})
+                  }
+                  else if(response.data.data.length > 0) {
+                      this.setState({responseData:response.data.data})
+                  }
+                }*/
+
+
+                _context.next = 30;
+                break;
+
+              case 27:
+                _context.prev = 27;
+                _context.t0 = _context["catch"](1);
+                // console.log(error);
                 this.setState({
-                  responseData: _context.t0
+                  responseData: _context.t0,
+                  shouldRender: true
                 });
 
-              case 18:
+              case 30:
                 this.setState({
-                  viewMode: 'string'
+                  viewMode: 'string',
+                  shouldRender: true
                 });
 
-              case 19:
+              case 31:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[0, 14]]);
+        }, _callee, this, [[1, 27]]);
       }));
 
       function handleClick() {
@@ -360,11 +410,48 @@ var ApiHitter = /*#__PURE__*/function (_React$Component) {
 
       if (this.state.urlToSearch != "") {
         buttonDisable = false;
+      }
+
+      var arr = [];
+
+      if (this.state.responseData != undefined && this.state.viewMode == 'json') {
+        if (this.state.responseData.length > 0) {
+          this.state.responseData.map(function (items) {
+            Object.keys(items).map(function (itemKeys) {
+              var obj = {};
+              obj[itemKeys] = items[itemKeys];
+              arr.push(obj);
+            });
+          });
+        } else {
+          Object.keys(this.state.responseData).map(function (props) {
+            if (_typeof(_this2.state.responseData[props]) !== 'object') {
+              var obj = {};
+              obj[props] = _this2.state.responseData[props];
+              arr.push(obj);
+            } else {
+              if (_this2.state.responseData[props].length > 0) {
+                _this2.state.responseData[props].map(function (items) {
+                  Object.keys(items).map(function (itemKeys) {
+                    var obj = {};
+                    obj[itemKeys] = items[itemKeys];
+                    arr.push(obj);
+                  });
+                });
+              }
+            }
+          });
+        }
       } // console.log(this.state.requestType);
       // console.log(this.state.urlToSearch);
 
 
       return /*#__PURE__*/_react.default.createElement("div", {
+        style: {
+          'height': '100vh',
+          'backgroundColor': 'aliceblue'
+        }
+      }, /*#__PURE__*/_react.default.createElement("div", {
         className: "container"
       }, /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("div", {
         className: "row"
@@ -379,13 +466,18 @@ var ApiHitter = /*#__PURE__*/function (_React$Component) {
         id: "requestType",
         onChange: function onChange(event) {
           _this2.setState({
-            requestType: event.target.value
+            requestType: event.target.value,
+            shouldRender: true
           });
         },
         value: this.state.requestType
       }, /*#__PURE__*/_react.default.createElement("option", {
         value: "get"
       }, "GET"), /*#__PURE__*/_react.default.createElement("option", {
+        value: "post"
+      }, "POST"), /*#__PURE__*/_react.default.createElement("option", {
+        value: "put"
+      }, "PUT"), /*#__PURE__*/_react.default.createElement("option", {
         value: "delete"
       }, "DELETE"))), "\xA0\xA0\xA0\xA0\xA0", /*#__PURE__*/_react.default.createElement("div", {
         className: "col-lg-5 col-md-5 col-sm-5"
@@ -395,12 +487,13 @@ var ApiHitter = /*#__PURE__*/function (_React$Component) {
         id: "apiUrl",
         onChange: function onChange(event) {
           return _this2.setState({
-            urlToSearch: event.target.value
+            urlToSearch: event.target.value,
+            shouldRender: false
           });
         },
-        value: this.state.urlToSearch,
+        defaultValue: this.state.urlToSearch,
         style: {
-          'width': '80%'
+          'width': '95%'
         }
       })), /*#__PURE__*/_react.default.createElement("div", {
         className: "col-lg-2 col-md-2 col-sm-2"
@@ -411,25 +504,42 @@ var ApiHitter = /*#__PURE__*/function (_React$Component) {
           'width': '50%',
           'cursor': 'pointer'
         },
-        disabled: buttonDisable,
         onClick: function onClick() {
           return _this2.handleClick();
         }
       }, "Search"))), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("div", {
         className: "row"
-      }, /*#__PURE__*/_react.default.createElement("div", {
+      }, (this.state.requestType == 'post' || this.state.requestType == 'put') && /*#__PURE__*/_react.default.createElement("div", {
+        className: "col-lg-9 col-md-9 col-sm-9"
+      }, /*#__PURE__*/_react.default.createElement("textarea", {
+        style: {
+          'width': '100%',
+          'minHeight': '200px',
+          'overflowY': 'auto'
+        },
+        placeholder: "enter the request body",
+        onChange: function onChange(event) {
+          _this2.setState({
+            requestBody: event.target.value,
+            shouldRender: false
+          });
+        },
+        defaultValue: this.state.requestBody
+      })), /*#__PURE__*/_react.default.createElement("div", {
         className: "col-lg-9 col-md-9 col-sm-9",
         style: {
           'border': 'inset',
           'minHeight': '200px',
           'maxHeight': '600px',
+          'backgroundColor': 'white',
           'overflowY': 'auto'
         }
-      }, this.state.responseData.length > 0 && this.state.viewMode == 'json' && this.state.responseData.map(function (item) {
-        return Object.keys(item).map(function (value) {
+      }, this.state.responseData != undefined && this.state.viewMode == 'json' && arr.map(function (item1) {
+        return Object.keys(item1).map(function (value) {
+          // console.log(item1[value]);
           return /*#__PURE__*/_react.default.createElement("p", {
-            key: item.id + item[value]
-          }, value, ":", JSON.stringify(item[value]));
+            key: value
+          }, value, ":", JSON.stringify(item1[value]));
         });
       }), this.state.viewMode == 'string' && JSON.stringify(this.state.responseData)), /*#__PURE__*/_react.default.createElement("div", {
         className: "col-lg-1 col-md-1 col-sm-1"
@@ -440,18 +550,20 @@ var ApiHitter = /*#__PURE__*/function (_React$Component) {
         className: "btn btn-warning",
         onClick: function onClick() {
           _this2.setState({
-            viewMode: 'json'
+            viewMode: 'json',
+            shouldRender: true
           });
         }
-      }, "Show data in JSON format"), this.state.viewMode == 'json' && /*#__PURE__*/_react.default.createElement("button", {
+      }, "Format"), this.state.viewMode == 'json' && /*#__PURE__*/_react.default.createElement("button", {
         type: "button",
         className: "btn btn-warning",
         onClick: function onClick() {
           _this2.setState({
-            viewMode: 'string'
+            viewMode: 'string',
+            shouldRender: true
           });
         }
-      }, "Show data in string format"))), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("br", null));
+      }, "Original data"))), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("br", null)));
     }
   }]);
 
